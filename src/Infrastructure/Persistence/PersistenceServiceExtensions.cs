@@ -13,7 +13,9 @@ public static class PersistenceServiceExtensions
     {
         return services
             .AddDbContext<ApplicationDbContext>(options => options
-                .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                .UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
+            .AddTransient<ITenantDbInitializer, TenantDbInitializer>()
+            .AddTransient<ApplicationDbInitializer>();
     }
 
     public static async Task AddDatabaseInitializerAsync(this IServiceProvider serviceProvider,
