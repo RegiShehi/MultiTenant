@@ -1,4 +1,5 @@
 using Infrastructure;
+using Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
+
+// database initializer
+await app.Services.AddDatabaseInitializerAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

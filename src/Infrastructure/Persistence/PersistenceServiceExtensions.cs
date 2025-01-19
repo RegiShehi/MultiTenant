@@ -1,11 +1,12 @@
 ﻿using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.DbInitializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.Persistence;
 
-internal static class PersistenceServiceExtensions
+public static class PersistenceServiceExtensions
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services,
         IConfiguration configuration)
@@ -13,5 +14,14 @@ internal static class PersistenceServiceExtensions
         return services
             .AddDbContext<ApplicationDbContext>(options => options
                 .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    }
+
+    public static async Task AddDatabaseInitializerAsync(this IServiceProvider serviceProvider,
+        CancellationToken cancellationToken = default)
+    {
+        using var scope = serviceProvider.CreateScope();
+
+        await scope.ServiceProvider.GetRequiredService<ITenantDbInitializer>()
+            .InitializeDatabaseAsync(cancellationToken);
     }
 }
