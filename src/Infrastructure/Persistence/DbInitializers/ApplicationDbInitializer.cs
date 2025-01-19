@@ -40,11 +40,11 @@ public class ApplicationDbInitializer(
             switch (roleName)
             {
                 case RoleConstants.Basic:
-                    await AssignPermissionsToRole(applicationDbContext, SchoolPermissions.Basic, incomingRole,
+                    await AssignPermissionsToRole(SchoolPermissions.Basic, incomingRole,
                         cancellationToken);
                     break;
                 case RoleConstants.Admin:
-                    await AssignPermissionsToRole(applicationDbContext, SchoolPermissions.Admin, incomingRole,
+                    await AssignPermissionsToRole(SchoolPermissions.Admin, incomingRole,
                         cancellationToken);
                     break;
             }
@@ -83,7 +83,7 @@ public class ApplicationDbInitializer(
             await userManager.AddToRoleAsync(adminUser, RoleConstants.Admin);
     }
 
-    private async Task AssignPermissionsToRole(ApplicationDbContext context,
+    private async Task AssignPermissionsToRole(
         IReadOnlyCollection<SchoolPermission> permissions, ApplicationRole role, CancellationToken cancellationToken)
     {
         var currentClaims = await roleManager.GetClaimsAsync(role);
@@ -93,14 +93,14 @@ public class ApplicationDbInitializer(
             if (currentClaims.Any(c => c.Type == ClaimConstants.Permission && c.Value == rolePermission.Name))
                 continue;
 
-            await context.RoleClaims.AddAsync(new IdentityRoleClaim<string>
+            await applicationDbContext.RoleClaims.AddAsync(new IdentityRoleClaim<string>
             {
                 RoleId = role.Id,
                 ClaimType = ClaimConstants.Permission,
                 ClaimValue = rolePermission.Name
             }, cancellationToken);
 
-            await context.SaveChangesAsync(cancellationToken);
+            await applicationDbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }
