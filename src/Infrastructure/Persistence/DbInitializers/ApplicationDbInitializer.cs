@@ -10,15 +10,16 @@ namespace Infrastructure.Persistence.DbInitializers;
 public class ApplicationDbInitializer(
     AbcTenantInfo tenant,
     RoleManager<ApplicationRole> roleManager,
-    UserManager<ApplicationUser> userManager)
+    UserManager<ApplicationUser> userManager,
+    ApplicationDbContext applicationDbContext)
 {
-    public async Task InitializeDatabaseAsync(ApplicationDbContext context, CancellationToken cancellationToken)
+    public async Task InitializeDatabaseAsync(CancellationToken cancellationToken)
     {
-        await InitializeDefaultRoles(context, cancellationToken);
+        await InitializeDefaultRolesAsync(cancellationToken);
         await InitializeAdminUserAsync();
     }
 
-    private async Task InitializeDefaultRoles(ApplicationDbContext context, CancellationToken cancellationToken)
+    private async Task InitializeDefaultRolesAsync(CancellationToken cancellationToken)
     {
         foreach (var roleName in RoleConstants.DefaultRoles)
         {
@@ -39,10 +40,12 @@ public class ApplicationDbInitializer(
             switch (roleName)
             {
                 case RoleConstants.Basic:
-                    await AssignPermissionsToRole(context, SchoolPermissions.Basic, incomingRole, cancellationToken);
+                    await AssignPermissionsToRole(applicationDbContext, SchoolPermissions.Basic, incomingRole,
+                        cancellationToken);
                     break;
                 case RoleConstants.Admin:
-                    await AssignPermissionsToRole(context, SchoolPermissions.Admin, incomingRole, cancellationToken);
+                    await AssignPermissionsToRole(applicationDbContext, SchoolPermissions.Admin, incomingRole,
+                        cancellationToken);
                     break;
             }
         }
