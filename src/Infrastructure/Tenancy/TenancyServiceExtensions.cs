@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 
 namespace Infrastructure.Tenancy;
 
 internal static class TenancyServiceExtensions
 {
     internal static IServiceCollection AddMultiTenancyServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        return services
+        IConfiguration configuration) =>
+        services
             .AddDbContext<TenantDbContext>(options => options
                 .UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
             .AddMultiTenant<AbcTenantInfo>()
@@ -21,19 +21,19 @@ internal static class TenancyServiceExtensions
             .WithCustomQueryStringStrategy(TenancyConstants.TenantIdName)
             .WithEFCoreStore<TenantDbContext, AbcTenantInfo>().Services
             .AddScoped<ITenantService, TenantService>();
-    }
 
     private static FinbuckleMultiTenantBuilder<AbcTenantInfo> WithCustomQueryStringStrategy(
-        this FinbuckleMultiTenantBuilder<AbcTenantInfo> builder, string customQueryStringStrategy)
-    {
-        return builder
+        this FinbuckleMultiTenantBuilder<AbcTenantInfo> builder, string customQueryStringStrategy) =>
+        builder
             .WithDelegateStrategy(context =>
             {
-                if (context is not HttpContext httpContext) return Task.FromResult<string>(null!)!;
+                if (context is not HttpContext httpContext)
+                {
+                    return Task.FromResult<string>(null!)!;
+                }
 
-                httpContext.Request.Query.TryGetValue(customQueryStringStrategy, out var tenantIdParam);
+                httpContext.Request.Query.TryGetValue(customQueryStringStrategy, out StringValues tenantIdParam);
 
                 return Task.FromResult(tenantIdParam.ToString())!;
             });
-    }
 }

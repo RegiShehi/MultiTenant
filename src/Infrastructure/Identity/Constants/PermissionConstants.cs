@@ -29,10 +29,7 @@ public record SchoolPermission(
     public string Name => NameFor(Action, Feature);
 
     // Permission.Feature.Action
-    private static string NameFor(string action, string feature)
-    {
-        return $"Permission.{feature}.{action}";
-    }
+    private static string NameFor(string action, string feature) => $"Permission.{feature}.{action}";
 }
 
 public static class SchoolPermissions
@@ -50,6 +47,7 @@ public static class SchoolPermissions
         new("View Roles", SchoolAction.View, SchoolFeature.Roles),
         new("Create Roles", SchoolAction.Create, SchoolFeature.Roles),
         new("Update Roles", SchoolAction.Update, SchoolFeature.Roles),
+
         new("Delete Roles", SchoolAction.Delete, SchoolFeature.Roles),
 
         new("View Role Claims/Permissions", SchoolAction.View, SchoolFeature.RoleClaims),

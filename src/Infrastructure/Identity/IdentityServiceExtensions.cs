@@ -10,9 +10,8 @@ namespace Infrastructure.Identity;
 
 internal static class IdentityServiceExtensions
 {
-    internal static IServiceCollection AddIdentityServices(this IServiceCollection services)
-    {
-        return services
+    internal static IServiceCollection AddIdentityServices(this IServiceCollection services) =>
+        services
             .AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -27,5 +26,4 @@ internal static class IdentityServiceExtensions
             .Services
             .AddTransient<ITokenService, TokenService>()
             .AddTransient<IRoleService, RoleService>();
-    }
 }

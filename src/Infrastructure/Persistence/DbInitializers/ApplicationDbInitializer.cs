@@ -1,4 +1,5 @@
-﻿using Infrastructure.Identity.Constants;
+﻿using System.Security.Claims;
+using Infrastructure.Identity.Constants;
 using Infrastructure.Identity.Models;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Tenancy;
@@ -21,9 +22,9 @@ public class ApplicationDbInitializer(
 
     private async Task InitializeDefaultRolesAsync(CancellationToken cancellationToken)
     {
-        foreach (var roleName in RoleConstants.DefaultRoles)
+        foreach (string roleName in RoleConstants.DefaultRoles)
         {
-            var incomingRole = await roleManager.FindByNameAsync(roleName);
+            ApplicationRole? incomingRole = await roleManager.FindByNameAsync(roleName);
 
             if (incomingRole is null)
             {
@@ -53,9 +54,12 @@ public class ApplicationDbInitializer(
 
     private async Task InitializeAdminUserAsync()
     {
-        if (string.IsNullOrEmpty(tenant.AdminEmail)) return;
+        if (string.IsNullOrEmpty(tenant.AdminEmail))
+        {
+            return;
+        }
 
-        var adminUser = await userManager.Users.FirstOrDefaultAsync(x => x.Email == tenant.AdminEmail);
+        ApplicationUser? adminUser = await userManager.Users.FirstOrDefaultAsync(x => x.Email == tenant.AdminEmail);
 
         if (adminUser is null)
         {
@@ -80,18 +84,22 @@ public class ApplicationDbInitializer(
 
         // assign user to admin role
         if (!await userManager.IsInRoleAsync(adminUser, RoleConstants.Admin))
+        {
             await userManager.AddToRoleAsync(adminUser, RoleConstants.Admin);
+        }
     }
 
     private async Task AssignPermissionsToRole(
         IReadOnlyCollection<SchoolPermission> permissions, ApplicationRole role, CancellationToken cancellationToken)
     {
-        var currentClaims = await roleManager.GetClaimsAsync(role);
+        IList<Claim> currentClaims = await roleManager.GetClaimsAsync(role);
 
-        foreach (var rolePermission in permissions)
+        foreach (SchoolPermission rolePermission in permissions)
         {
             if (currentClaims.Any(c => c.Type == ClaimConstants.Permission && c.Value == rolePermission.Name))
+            {
                 continue;
+            }
 
             await applicationDbContext.RoleClaims.AddAsync(new IdentityRoleClaim<string>
             {

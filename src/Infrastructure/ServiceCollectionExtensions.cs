@@ -9,11 +9,9 @@ namespace Infrastructure;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        return services
+        IConfiguration configuration) =>
+        services
             .AddMultiTenancyServices(configuration)
             .AddPersistenceServices(configuration)
             .AddIdentityServices();
-    }
 }

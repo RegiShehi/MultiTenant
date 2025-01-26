@@ -9,19 +9,17 @@ namespace Infrastructure.Persistence;
 public static class PersistenceServiceExtensions
 {
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        return services
+        IConfiguration configuration) =>
+        services
             .AddDbContext<ApplicationDbContext>(options => options
                 .UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
             .AddTransient<ITenantDbInitializer, TenantDbInitializer>()
             .AddTransient<ApplicationDbInitializer>();
-    }
 
     public static async Task AddDatabaseInitializerAsync(this IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
-        using var scope = serviceProvider.CreateScope();
+        using IServiceScope scope = serviceProvider.CreateScope();
 
         await scope.ServiceProvider.GetRequiredService<ITenantDbInitializer>()
             .InitializeDatabaseAsync(cancellationToken);

@@ -14,7 +14,7 @@ public class TenantDbInitializer(
     {
         await InitializeRootTenantAsync(cancellationToken);
 
-        foreach (var tenant in await tenantDbContext.TenantInfo.ToListAsync(cancellationToken))
+        foreach (AbcTenantInfo tenant in await tenantDbContext.TenantInfo.ToListAsync(cancellationToken))
         {
             await InitializeApplicationDatabaseAsync(tenant, cancellationToken);
         }
@@ -43,7 +43,7 @@ public class TenantDbInitializer(
 
     private async Task InitializeApplicationDatabaseAsync(AbcTenantInfo tenant, CancellationToken cancellationToken)
     {
-        using var scope = serviceProvider.CreateScope();
+        using IServiceScope scope = serviceProvider.CreateScope();
 
         serviceProvider.GetRequiredService<IMultiTenantContextAccessor>()
             .MultiTenantContext = new MultiTenantContext<AbcTenantInfo>

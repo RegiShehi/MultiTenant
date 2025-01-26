@@ -15,19 +15,29 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
 {
     public async Task<TokenResponse> LoginAsync(TokenRequest request)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null) throw new UnauthorizedAccessException("Authentication failed");
+        if (user is null)
+        {
+            throw new UnauthorizedAccessException("Authentication failed");
+        }
 
         if (!await userManager.CheckPasswordAsync(user, request.Password))
+        {
             throw new UnauthorizedAccessException("Incorrect credentials");
+        }
 
-        if (!user.IsActive) throw new UnauthorizedAccessException("User is not active. Please contact admin.");
+        if (!user.IsActive)
+        {
+            throw new UnauthorizedAccessException("User is not active. Please contact admin.");
+        }
 
         if (tenant.Id != TenancyConstants.Root.Id)
         {
             if (tenant.ValidUpTo < DateTime.UtcNow)
+            {
                 throw new UnauthorizedAccessException("Tenant subscription has expired. Please contact admin.");
+            }
         }
 
         return await GenerateTokenAndUpdateUserAsync(user);
@@ -35,12 +45,12 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
 
     public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
-        var userPrincipal = GetClaimPrincipalFromExpiredToken(request.CurrentJwtToken);
+        ClaimsPrincipal userPrincipal = GetClaimPrincipalFromExpiredToken(request.CurrentJwtToken);
 
-        var userEmail = userPrincipal.GetEmail();
+        string userEmail = userPrincipal.GetEmail();
 
-        var user = await userManager.FindByEmailAsync(userEmail) ??
-                   throw new UnauthorizedAccessException("User not found.");
+        ApplicationUser user = await userManager.FindByEmailAsync(userEmail) ??
+                               throw new UnauthorizedAccessException("User not found.");
 
         return await GenerateTokenAndUpdateUserAsync(user);
     }
@@ -59,19 +69,22 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(expiredToken, validationParams, out var securityToken);
+        ClaimsPrincipal? principal =
+            tokenHandler.ValidateToken(expiredToken, validationParams, out SecurityToken? securityToken);
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature,
                 StringComparison.InvariantCultureIgnoreCase))
+        {
             throw new UnauthorizedAccessException("Invalid token. Failed to create refresh token.");
+        }
 
         return principal;
     }
 
     private async Task<TokenResponse> GenerateTokenAndUpdateUserAsync(ApplicationUser user)
     {
-        var token = GenerateJwtToken(user);
+        string token = GenerateJwtToken(user);
         user.RefreshToken = GenerateRefreshToken();
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
@@ -85,14 +98,12 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         };
     }
 
-    private string GenerateJwtToken(ApplicationUser user)
-    {
-        return GenerateEncryptedToken(GetSigningCredentials(), GetUserClaims(user));
-    }
+    private string GenerateJwtToken(ApplicationUser user) =>
+        GenerateEncryptedToken(GetSigningCredentials(), GetUserClaims(user));
 
     private string GenerateRefreshToken()
     {
-        var randomNumber = new byte[32];
+        byte[]? randomNumber = new byte[32];
 
         using var randomNumberGenerator = RandomNumberGenerator.Create();
         randomNumberGenerator.GetBytes(randomNumber);
@@ -112,14 +123,13 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
 
     private SigningCredentials GetSigningCredentials()
     {
-        var secret = "somerandomsecrettexttosetsecrettext"u8.ToArray();
+        byte[] secret = "somerandomsecrettexttosetsecrettext"u8.ToArray();
 
         return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
     }
 
-    private IEnumerable<Claim> GetUserClaims(ApplicationUser user)
-    {
-        return new List<Claim>
+    private IEnumerable<Claim> GetUserClaims(ApplicationUser user) =>
+        new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Email, user.Email ?? string.Empty),
@@ -128,5 +138,4 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
             new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
             new(ClaimConstants.Tenant, tenant.Id ?? string.Empty)
         };
-    }
 }
