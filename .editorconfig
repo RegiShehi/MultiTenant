@@ -208,6 +208,9 @@ dotnet_diagnostic.SA1000.severity = none
 # SA1009: A closing parenthesis within a C# statement is not spaced correctly.
 dotnet_diagnostic.SA1009.severity = none
 
+# SA1010: Opening square brackets should not be preceded by a space
+dotnet_diagnostic.SA1010.severity = none
+
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = none
 
@@ -225,8 +228,24 @@ dotnet_diagnostic.SA1633.severity = none
 
 # NET.CodeAnalyzers
 
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1861: Prefer 'static readonly' fields over constant array arguments if the called method is called repeatedly and is not mutating the passed array
+dotnet_diagnostic.CA1861.severity = none
+
+# CA2326: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = none
+
 # Visual Studio.Analyzers
+
 dotnet_diagnostic.IDE0046.severity = suggestion
+
 dotnet_diagnostic.IDE0053.severity = suggestion
+
 dotnet_diagnostic.IDE0270.severity = suggestion
+
 dotnet_diagnostic.IDE0022.severity = suggestion

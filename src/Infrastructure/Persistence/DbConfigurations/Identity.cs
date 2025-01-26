@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
+internal sealed class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder) =>
         builder
@@ -14,7 +14,7 @@ internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
             .IsMultiTenant().AdjustUniqueIndexes();
 }
 
-internal class ApplicationRoleConfig : IEntityTypeConfiguration<ApplicationRole>
+internal sealed class ApplicationRoleConfig : IEntityTypeConfiguration<ApplicationRole>
 {
     public void Configure(EntityTypeBuilder<ApplicationRole> builder) =>
         builder
@@ -22,7 +22,7 @@ internal class ApplicationRoleConfig : IEntityTypeConfiguration<ApplicationRole>
             .IsMultiTenant().AdjustUniqueIndexes();
 }
 
-internal class ApplicationUserClaimConfig : IEntityTypeConfiguration<IdentityRoleClaim<string>>
+internal sealed class ApplicationUserClaimConfig : IEntityTypeConfiguration<IdentityRoleClaim<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityRoleClaim<string>> builder) =>
         builder
@@ -30,7 +30,7 @@ internal class ApplicationUserClaimConfig : IEntityTypeConfiguration<IdentityRol
             .IsMultiTenant();
 }
 
-internal class IdentityUserRoleConfig : IEntityTypeConfiguration<IdentityUserRole<string>>
+internal sealed class IdentityUserRoleConfig : IEntityTypeConfiguration<IdentityUserRole<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder) =>
         builder
@@ -38,7 +38,7 @@ internal class IdentityUserRoleConfig : IEntityTypeConfiguration<IdentityUserRol
             .IsMultiTenant();
 }
 
-internal class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserClaim<string>>
+internal sealed class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserClaim<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder) =>
         builder
@@ -46,7 +46,7 @@ internal class IdentityUserClaimConfig : IEntityTypeConfiguration<IdentityUserCl
             .IsMultiTenant();
 }
 
-internal class IdentityUserTokenConfig : IEntityTypeConfiguration<IdentityUserToken<string>>
+internal sealed class IdentityUserTokenConfig : IEntityTypeConfiguration<IdentityUserToken<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserToken<string>> builder) =>
         builder
@@ -54,7 +54,7 @@ internal class IdentityUserTokenConfig : IEntityTypeConfiguration<IdentityUserTo
             .IsMultiTenant();
 }
 
-internal class IdentityUserLoginConfig : IEntityTypeConfiguration<IdentityUserLogin<string>>
+internal sealed class IdentityUserLoginConfig : IEntityTypeConfiguration<IdentityUserLogin<string>>
 {
     public void Configure(EntityTypeBuilder<IdentityUserLogin<string>> builder) =>
         builder

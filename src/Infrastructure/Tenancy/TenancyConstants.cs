@@ -7,7 +7,7 @@ public static class TenancyConstants
     public const string FirstName = "Regi";
     public const string LastName = "Shehi";
 
-    public static class Root
+    internal static class Root
     {
         public const string Id = "root";
         public const string Name = "Root";

@@ -69,8 +69,8 @@ public class ApplicationDbInitializer(
                 UserName = tenant.AdminEmail,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
-                NormalizedEmail = tenant.AdminEmail.ToUpper(),
-                NormalizedUserName = tenant.AdminEmail.ToUpper(),
+                NormalizedEmail = tenant.AdminEmail.ToUpperInvariant(),
+                NormalizedUserName = tenant.AdminEmail.ToUpper(System.Globalization.CultureInfo.CurrentCulture),
                 IsActive = true
             };
 
@@ -88,7 +88,9 @@ public class ApplicationDbInitializer(
     }
 
     private async Task AssignPermissionsToRole(
-        IReadOnlyCollection<SchoolPermission> permissions, ApplicationRole role, CancellationToken cancellationToken)
+        IReadOnlyCollection<SchoolPermissionDetails> permissions,
+        ApplicationRole role,
+        CancellationToken cancellationToken)
     {
         IList<Claim> currentClaims = await roleManager.GetClaimsAsync(role);
 

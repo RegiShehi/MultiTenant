@@ -7,7 +7,7 @@ using Finbuckle.MultiTenant;
 using Persistence.DbInitializers;
 using Mapster;
 
-internal class TenantService(
+internal sealed class TenantService(
     ApplicationDbInitializer applicationDbInitializer,
     IMultiTenantStore<AbcTenantInfo> tenantStore)
     : ITenantService

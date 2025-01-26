@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Identity.Tokens;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -14,12 +15,8 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
 {
     public async Task<TokenResponse> LoginAsync(TokenRequest request)
     {
-        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email);
-
-        if (user is null)
-        {
-            throw new UnauthorizedAccessException("Authentication failed");
-        }
+        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email) ??
+                                throw new UnauthorizedAccessException("Authentication failed");
 
         if (!await userManager.CheckPasswordAsync(user, request.Password))
         {
@@ -80,7 +77,11 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
     }
 
-    private ClaimsPrincipal GetClaimPrincipalFromExpiredToken(string expiredToken)
+    [SuppressMessage(
+        "Security",
+        "CA5404:Do not disable token validation checks",
+        Justification = "Just for testing purpose")]
+    private static ClaimsPrincipal GetClaimPrincipalFromExpiredToken(string expiredToken)
     {
         var validationParams = new TokenValidationParameters
         {
@@ -100,7 +101,7 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
             !jwtSecurityToken.Header.Alg.Equals(
                 SecurityAlgorithms.HmacSha256Signature,
-                StringComparison.InvariantCultureIgnoreCase))
+                StringComparison.OrdinalIgnoreCase))
         {
             throw new UnauthorizedAccessException("Invalid token. Failed to create refresh token.");
         }
