@@ -87,6 +87,7 @@ internal class TenantService(
         var updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
+
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
 
         return tenant.Id;
