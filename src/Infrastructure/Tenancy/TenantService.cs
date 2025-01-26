@@ -1,11 +1,11 @@
-﻿using Application.Features.Tenancy;
+﻿namespace Infrastructure.Tenancy;
+
+using Application.Features.Tenancy;
 using Application.Features.Tenancy.Commands;
 using Application.Features.Tenancy.Models;
 using Finbuckle.MultiTenant;
-using Infrastructure.Persistence.DbInitializers;
+using Persistence.DbInitializers;
 using Mapster;
-
-namespace Infrastructure.Tenancy;
 
 internal class TenantService(
     ApplicationDbInitializer applicationDbInitializer,
@@ -55,7 +55,6 @@ internal class TenantService(
         bool updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
-
         {
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
         }
@@ -98,7 +97,6 @@ internal class TenantService(
         bool updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
-
         {
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
         }
@@ -121,20 +119,6 @@ internal class TenantService(
         {
             throw new ArgumentException($"Tenant with {id} could not be found");
         }
-
-        #region Manual mapping - option 1
-
-        // return new TenantDto
-        // {
-        //     Id = tenant.Id,
-        //     Name = tenant.Name,
-        //     ConnectionString = tenant.ConnectionString,
-        //     AdminEmail = tenant.AdminEmail,
-        //     ValidUpTo = tenant.ValidUpTo,
-        //     IsActive = tenant.IsActive
-        // };
-
-        #endregion
 
         return tenant.Adapt<TenantDto>();
     }

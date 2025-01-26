@@ -1,24 +1,24 @@
-﻿using Finbuckle.MultiTenant;
-using Infrastructure.Identity.Models;
+﻿namespace Infrastructure.Persistence.Contexts;
+
+using Finbuckle.MultiTenant;
+using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-namespace Infrastructure.Persistence.Contexts;
 
 public abstract class BaseDbContext :
     MultiTenantIdentityDbContext<ApplicationUser, ApplicationRole, string,
         IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>,
         IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
-    protected BaseDbContext(ITenantInfo tenantInfo, DbContextOptions options) : base(tenantInfo, options)
+    protected BaseDbContext(ITenantInfo tenantInfo, DbContextOptions options)
+        : base(tenantInfo, options)
     {
     }
 
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

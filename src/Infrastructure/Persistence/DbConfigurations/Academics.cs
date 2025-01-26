@@ -1,9 +1,9 @@
-﻿using Domain.Entities;
+﻿namespace Infrastructure.Persistence.DbConfigurations;
+
+using Domain.Entities;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Infrastructure.Persistence.DbConfigurations;
 
 public class SchoolConfig : IEntityTypeConfiguration<School>
 {

@@ -2,6 +2,6 @@
 
 public class RefreshTokenRequest
 {
-    public string CurrentJwtToken { get; set; }
-    public string CurrentRefreshToken { get; set; }
+    public required string CurrentJwtToken { get; set; }
+    public required string CurrentRefreshToken { get; set; }
 }

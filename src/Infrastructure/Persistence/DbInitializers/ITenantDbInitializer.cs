@@ -1,6 +1,4 @@
-﻿using Infrastructure.Tenancy;
-
-namespace Infrastructure.Persistence.DbInitializers;
+﻿namespace Infrastructure.Persistence.DbInitializers;
 
 public interface ITenantDbInitializer
 {

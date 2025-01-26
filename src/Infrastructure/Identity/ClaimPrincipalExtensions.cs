@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Infrastructure.Identity.Constants;
+﻿namespace Infrastructure.Identity;
 
-namespace Infrastructure.Identity;
+using System.Security.Claims;
+using Constants;
 
 public static class ClaimPrincipalExtensions
 {

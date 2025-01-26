@@ -106,7 +106,8 @@ csharp_style_unused_value_assignment_preference = discard_variable:silent
 csharp_style_unused_value_expression_statement_preference = discard_variable:silent
 
 # 'using' directive preferences
-csharp_using_directive_placement = outside_namespace:error
+# csharp_using_directive_placement = outside_namespace:error
+csharp_using_directive_placement = inside_namespace:error
 
 #### C# Formatting Rules ####
 
@@ -172,7 +173,6 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_m
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
 # Symbol specifications
-
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
 dotnet_naming_symbols.interface.required_modifiers =
@@ -196,3 +196,29 @@ dotnet_naming_style.begins_with_i.required_prefix = I
 dotnet_naming_style.begins_with_i.required_suffix =
 dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
+
+# StyleCop.Analyzers
+
+# SA0001: Xml Comment Analysis disabled
+dotnet_diagnostic.SA0001.severity = none
+
+# SA1000: Keywords must be spaced correctly
+dotnet_diagnostic.SA1000.severity = none
+
+# SA1009: A closing parenthesis within a C# statement is not spaced correctly.
+dotnet_diagnostic.SA1009.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1313: Parameter Names Must Begin With lower case letter
+dotnet_diagnostic.SA1313.severity = none
+
+# SA1413: Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = none
+
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none

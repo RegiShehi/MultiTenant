@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿namespace Infrastructure.Identity.Models;
 
-namespace Infrastructure.Identity.Models;
+using Microsoft.AspNetCore.Identity;
 
 public class ApplicationRole : IdentityRole
 {

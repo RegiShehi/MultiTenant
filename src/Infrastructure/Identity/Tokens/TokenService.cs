@@ -1,15 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿namespace Infrastructure.Identity.Tokens;
+
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using Application.Features.Identity.Tokens;
-using Infrastructure.Identity.Constants;
-using Infrastructure.Identity.Models;
-using Infrastructure.Tenancy;
+using Constants;
+using Models;
+using Tenancy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-
-namespace Infrastructure.Identity.Tokens;
 
 public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInfo tenant) : ITokenService
 {
@@ -32,12 +31,9 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
             throw new UnauthorizedAccessException("User is not active. Please contact admin.");
         }
 
-        if (tenant.Id != TenancyConstants.Root.Id)
+        if (tenant.Id != TenancyConstants.Root.Id && tenant.ValidUpTo < DateTime.UtcNow)
         {
-            if (tenant.ValidUpTo < DateTime.UtcNow)
-            {
-                throw new UnauthorizedAccessException("Tenant subscription has expired. Please contact admin.");
-            }
+            throw new UnauthorizedAccessException("Tenant subscription has expired. Please contact admin.");
         }
 
         return await GenerateTokenAndUpdateUserAsync(user);
@@ -53,6 +49,35 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
                                throw new UnauthorizedAccessException("User not found.");
 
         return await GenerateTokenAndUpdateUserAsync(user);
+    }
+
+    private static string GenerateRefreshToken()
+    {
+        byte[] randomNumber = new byte[32];
+
+        using var randomNumberGenerator = RandomNumberGenerator.Create();
+        randomNumberGenerator.GetBytes(randomNumber);
+
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    private static string GenerateEncryptedToken(SigningCredentials credentials, IEnumerable<Claim> claims)
+    {
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(60),
+            signingCredentials: credentials);
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        return tokenHandler.WriteToken(token);
+    }
+
+    private static SigningCredentials GetSigningCredentials()
+    {
+        byte[] secret = "somerandomsecrettexttosetsecrettext"u8.ToArray();
+
+        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
     }
 
     private ClaimsPrincipal GetClaimPrincipalFromExpiredToken(string expiredToken)
@@ -73,7 +98,8 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
             tokenHandler.ValidateToken(expiredToken, validationParams, out SecurityToken? securityToken);
 
         if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature,
+            !jwtSecurityToken.Header.Alg.Equals(
+                SecurityAlgorithms.HmacSha256Signature,
                 StringComparison.InvariantCultureIgnoreCase))
         {
             throw new UnauthorizedAccessException("Invalid token. Failed to create refresh token.");
@@ -101,41 +127,13 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
     private string GenerateJwtToken(ApplicationUser user) =>
         GenerateEncryptedToken(GetSigningCredentials(), GetUserClaims(user));
 
-    private string GenerateRefreshToken()
-    {
-        byte[]? randomNumber = new byte[32];
-
-        using var randomNumberGenerator = RandomNumberGenerator.Create();
-        randomNumberGenerator.GetBytes(randomNumber);
-
-        return Convert.ToBase64String(randomNumber);
-    }
-
-    private string GenerateEncryptedToken(SigningCredentials credentials, IEnumerable<Claim> claims)
-    {
-        var token = new JwtSecurityToken(claims: claims, expires: DateTime.UtcNow.AddMinutes(60),
-            signingCredentials: credentials);
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        return tokenHandler.WriteToken(token);
-    }
-
-    private SigningCredentials GetSigningCredentials()
-    {
-        byte[] secret = "somerandomsecrettexttosetsecrettext"u8.ToArray();
-
-        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
-    }
-
-    private IEnumerable<Claim> GetUserClaims(ApplicationUser user) =>
-        new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.Name, user.FirstName ?? string.Empty),
-            new(ClaimTypes.Surname, user.LastName ?? string.Empty),
-            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
-            new(ClaimConstants.Tenant, tenant.Id ?? string.Empty)
-        };
+    private List<Claim> GetUserClaims(ApplicationUser user) =>
+    [
+        new(ClaimTypes.NameIdentifier, user.Id),
+        new(ClaimTypes.Email, user.Email ?? string.Empty),
+        new(ClaimTypes.Name, user.FirstName ?? string.Empty),
+        new(ClaimTypes.Surname, user.LastName ?? string.Empty),
+        new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
+        new(ClaimConstants.Tenant, tenant.Id ?? string.Empty)
+    ];
 }

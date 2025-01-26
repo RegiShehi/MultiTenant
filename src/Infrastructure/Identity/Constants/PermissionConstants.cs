@@ -34,7 +34,7 @@ public record SchoolPermission(
 
 public static class SchoolPermissions
 {
-    private static readonly SchoolPermission[] _allPermissions =
+    private static readonly SchoolPermission[] AllPermissions =
     [
         new("View Users", SchoolAction.View, SchoolFeature.Users),
         new("Create Users", SchoolAction.Create, SchoolFeature.Users),
@@ -64,8 +64,16 @@ public static class SchoolPermissions
         new("Upgrade Tenants Subscription", SchoolAction.UpgradeSubscription, SchoolFeature.Tenants, IsRoot: true)
     ];
 
-    public static IReadOnlyCollection<SchoolPermission> All => _allPermissions;
-    public static IReadOnlyCollection<SchoolPermission> Root => _allPermissions.Where(x => x.IsRoot).ToList();
-    public static IReadOnlyCollection<SchoolPermission> Admin => _allPermissions.Where(x => !x.IsRoot).ToList();
-    public static IReadOnlyCollection<SchoolPermission> Basic => _allPermissions.Where(x => x.IsBasic).ToList();
+    // Return a read-only wrapper to prevent external modification
+    public static IReadOnlyCollection<SchoolPermission> All { get; } = Array.AsReadOnly(AllPermissions);
+
+    // Cache the filtered collections
+    public static IReadOnlyCollection<SchoolPermission> Root { get; } =
+        Array.AsReadOnly(AllPermissions.Where(x => x.IsRoot).ToArray());
+
+    public static IReadOnlyCollection<SchoolPermission> Admin { get; } =
+        Array.AsReadOnly(AllPermissions.Where(x => !x.IsRoot).ToArray());
+
+    public static IReadOnlyCollection<SchoolPermission> Basic { get; } =
+        Array.AsReadOnly(AllPermissions.Where(x => x.IsBasic).ToArray());
 }

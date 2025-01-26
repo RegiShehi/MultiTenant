@@ -2,6 +2,6 @@
 
 public class UpdatePermissionRequest
 {
-    public string RoleId { get; set; }
-    public List<string> Permissions { get; set; }
+    public required string RoleId { get; set; }
+    public required List<string> Permissions { get; set; }
 }

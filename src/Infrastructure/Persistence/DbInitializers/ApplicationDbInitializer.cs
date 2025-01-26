@@ -1,12 +1,12 @@
-﻿using System.Security.Claims;
-using Infrastructure.Identity.Constants;
-using Infrastructure.Identity.Models;
-using Infrastructure.Persistence.Contexts;
-using Infrastructure.Tenancy;
+﻿namespace Infrastructure.Persistence.DbInitializers;
+
+using System.Security.Claims;
+using Identity.Constants;
+using Identity.Models;
+using Contexts;
+using Tenancy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
-namespace Infrastructure.Persistence.DbInitializers;
 
 public class ApplicationDbInitializer(
     AbcTenantInfo tenant,
@@ -41,12 +41,10 @@ public class ApplicationDbInitializer(
             switch (roleName)
             {
                 case RoleConstants.Basic:
-                    await AssignPermissionsToRole(SchoolPermissions.Basic, incomingRole,
-                        cancellationToken);
+                    await AssignPermissionsToRole(SchoolPermissions.Basic, incomingRole, cancellationToken);
                     break;
                 case RoleConstants.Admin:
-                    await AssignPermissionsToRole(SchoolPermissions.Admin, incomingRole,
-                        cancellationToken);
+                    await AssignPermissionsToRole(SchoolPermissions.Admin, incomingRole, cancellationToken);
                     break;
             }
         }
@@ -94,20 +92,20 @@ public class ApplicationDbInitializer(
     {
         IList<Claim> currentClaims = await roleManager.GetClaimsAsync(role);
 
-        foreach (SchoolPermission rolePermission in permissions)
-        {
-            if (currentClaims.Any(c => c.Type == ClaimConstants.Permission && c.Value == rolePermission.Name))
-            {
-                continue;
-            }
-
-            await applicationDbContext.RoleClaims.AddAsync(new IdentityRoleClaim<string>
+        // Identify permissions that are not present in currentClaims
+        var newClaims = permissions
+            .Where(p => !currentClaims.Any(c => c.Type == ClaimConstants.Permission && c.Value == p.Name))
+            .Select(p => new IdentityRoleClaim<string>
             {
                 RoleId = role.Id,
                 ClaimType = ClaimConstants.Permission,
-                ClaimValue = rolePermission.Name
-            }, cancellationToken);
+                ClaimValue = p.Name
+            })
+            .ToList();
 
+        if (newClaims.Count > 0)
+        {
+            await applicationDbContext.RoleClaims.AddRangeAsync(newClaims, cancellationToken);
             await applicationDbContext.SaveChangesAsync(cancellationToken);
         }
     }

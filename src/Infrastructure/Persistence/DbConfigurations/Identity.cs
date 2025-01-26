@@ -1,10 +1,10 @@
-﻿using Finbuckle.MultiTenant.EntityFrameworkCore;
-using Infrastructure.Identity.Models;
+﻿namespace Infrastructure.Persistence.DbConfigurations;
+
+using Finbuckle.MultiTenant.EntityFrameworkCore;
+using Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Infrastructure.Persistence.DbConfigurations;
 
 internal class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 {

@@ -1,12 +1,12 @@
-﻿using Application.Features.Identity.Roles;
+﻿namespace Infrastructure.Identity;
+
+using Application.Features.Identity.Roles;
 using Application.Features.Identity.Tokens;
-using Infrastructure.Identity.Models;
-using Infrastructure.Identity.Tokens;
-using Infrastructure.Persistence.Contexts;
+using Models;
+using Tokens;
+using Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace Infrastructure.Identity;
 
 internal static class IdentityServiceExtensions
 {

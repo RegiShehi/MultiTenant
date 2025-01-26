@@ -1,9 +1,9 @@
-﻿using Finbuckle.MultiTenant;
-using Infrastructure.Tenancy;
+﻿namespace Infrastructure.Persistence.DbInitializers;
+
+using Finbuckle.MultiTenant;
+using Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace Infrastructure.Persistence.DbInitializers;
 
 public class TenantDbInitializer(
     TenantDbContext tenantDbContext,

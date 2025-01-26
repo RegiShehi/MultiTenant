@@ -1,6 +1,6 @@
-﻿using Application.Features.Identity.Roles;
+﻿namespace Infrastructure.Identity;
 
-namespace Infrastructure.Identity;
+using Application.Features.Identity.Roles;
 
 public class RoleService : IRoleService
 {

@@ -1,8 +1,8 @@
-﻿using Domain.Entities;
+﻿namespace Infrastructure.Persistence.Contexts;
+
+using Domain.Entities;
 using Finbuckle.MultiTenant;
 using Microsoft.EntityFrameworkCore;
-
-namespace Infrastructure.Persistence.Contexts;
 
 public class ApplicationDbContext(ITenantInfo tenantInfo, DbContextOptions<ApplicationDbContext> options)
     : BaseDbContext(tenantInfo, options)

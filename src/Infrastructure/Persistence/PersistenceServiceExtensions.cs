@@ -1,14 +1,15 @@
-﻿using Infrastructure.Persistence.Contexts;
-using Infrastructure.Persistence.DbInitializers;
+﻿namespace Infrastructure.Persistence;
+
+using Contexts;
+using DbInitializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Infrastructure.Persistence;
-
 public static class PersistenceServiceExtensions
 {
-    public static IServiceCollection AddPersistenceServices(this IServiceCollection services,
+    public static IServiceCollection AddPersistenceServices(
+        this IServiceCollection services,
         IConfiguration configuration) =>
         services
             .AddDbContext<ApplicationDbContext>(options => options
@@ -16,7 +17,8 @@ public static class PersistenceServiceExtensions
             .AddTransient<ITenantDbInitializer, TenantDbInitializer>()
             .AddTransient<ApplicationDbInitializer>();
 
-    public static async Task AddDatabaseInitializerAsync(this IServiceProvider serviceProvider,
+    public static async Task AddDatabaseInitializerAsync(
+        this IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
         using IServiceScope scope = serviceProvider.CreateScope();

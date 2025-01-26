@@ -1,16 +1,17 @@
-﻿using Application.Features.Tenancy;
-using Infrastructure.Identity.Constants;
+﻿namespace Infrastructure.Tenancy;
+
+using Application.Features.Tenancy;
+using Identity.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
-namespace Infrastructure.Tenancy;
-
 internal static class TenancyServiceExtensions
 {
-    internal static IServiceCollection AddMultiTenancyServices(this IServiceCollection services,
+    internal static IServiceCollection AddMultiTenancyServices(
+        this IServiceCollection services,
         IConfiguration configuration) =>
         services
             .AddDbContext<TenantDbContext>(options => options

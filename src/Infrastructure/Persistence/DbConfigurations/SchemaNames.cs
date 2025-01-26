@@ -2,7 +2,7 @@
 
 internal static class SchemaNames
 {
-    public static string Identity = nameof(Identity);
-    public static string Academics = nameof(Academics);
-    public static string Multitenancy = nameof(Multitenancy);
+    public const string Identity = nameof(Identity);
+    public const string Academics = nameof(Academics);
+    public const string Multitenancy = nameof(Multitenancy);
 }

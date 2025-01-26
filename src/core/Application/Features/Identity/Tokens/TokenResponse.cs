@@ -2,7 +2,7 @@
 
 public class TokenResponse
 {
-    public string JwtToken { get; set; }
-    public string RefreshToken { get; set; }
+    public required string JwtToken { get; set; }
+    public required string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryDate { get; set; }
 }

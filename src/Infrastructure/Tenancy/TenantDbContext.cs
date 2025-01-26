@@ -1,8 +1,8 @@
-﻿using Finbuckle.MultiTenant.Stores;
-using Infrastructure.Persistence.DbConfigurations;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Infrastructure.Tenancy;
 
-namespace Infrastructure.Tenancy;
+using Finbuckle.MultiTenant.Stores;
+using Persistence.DbConfigurations;
+using Microsoft.EntityFrameworkCore;
 
 public class TenantDbContext(DbContextOptions<TenantDbContext> options) : EFCoreStoreDbContext<AbcTenantInfo>(options)
 {

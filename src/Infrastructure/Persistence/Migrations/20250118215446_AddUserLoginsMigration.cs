@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace Infrastructure.Persistence.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     /// <inheritdoc />
     public partial class AddUserLoginsMigration : Migration
     {
@@ -35,7 +35,7 @@ namespace Infrastructure.Persistence.Migrations
                 table: "UserLogins",
                 type: "nvarchar(450)",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddColumn<string>(
                 name: "TenantId",
@@ -44,7 +44,7 @@ namespace Infrastructure.Persistence.Migrations
                 type: "nvarchar(64)",
                 maxLength: 64,
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_UserLogins",
