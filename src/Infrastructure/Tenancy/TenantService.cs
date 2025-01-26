@@ -43,69 +43,84 @@ internal class TenantService(
 
     public async Task<string> ActivateAsync(string id)
     {
-        var tenant = await tenantStore.TryGetByIdentifierAsync(id);
+        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
 
         if (tenant is null)
+        {
             throw new ArgumentException($"Tenant with {id} could not be found");
+        }
 
         tenant.IsActive = true;
 
-        var updateSuccess = await tenantStore.TryUpdateAsync(tenant);
+        bool updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
+
+        {
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
+        }
 
         return tenant.Id;
     }
 
     public async Task<string> DeactivateAsync(string id)
     {
-        var tenant = await tenantStore.TryGetByIdentifierAsync(id);
+        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
 
         if (tenant is null)
+        {
             throw new ArgumentException($"Tenant with {id} could not be found");
+        }
 
         tenant.IsActive = false;
 
-        var updateSuccess = await tenantStore.TryUpdateAsync(tenant);
+        bool updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
+        {
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
+        }
 
         return tenant.Id;
     }
 
     public async Task<string> UpdateSubscriptionAsync(string id, DateTime newExpiryDate)
     {
-        var tenant = await tenantStore.TryGetByIdentifierAsync(id);
+        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
 
         if (tenant is null)
+        {
             throw new ArgumentException($"Tenant with {id} could not be found");
+        }
 
         tenant.ValidUpTo = newExpiryDate;
 
-        var updateSuccess = await tenantStore.TryUpdateAsync(tenant);
+        bool updateSuccess = await tenantStore.TryUpdateAsync(tenant);
 
         if (!updateSuccess || tenant.Id is null)
 
+        {
             throw new InvalidOperationException($"Failed to update tenant with ID '{id}'.");
+        }
 
         return tenant.Id;
     }
 
     public async Task<List<TenantDto>> GetTenantsAsync()
     {
-        var tenant = await tenantStore.GetAllAsync();
+        IEnumerable<AbcTenantInfo> tenant = await tenantStore.GetAllAsync();
 
         return tenant.Adapt<List<TenantDto>>();
     }
 
     public async Task<TenantDto> GetTenantByIdAsync(string id)
     {
-        var tenant = await tenantStore.TryGetByIdentifierAsync(id);
+        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
 
         if (tenant is null)
+        {
             throw new ArgumentException($"Tenant with {id} could not be found");
+        }
 
         #region Manual mapping - option 1
 
