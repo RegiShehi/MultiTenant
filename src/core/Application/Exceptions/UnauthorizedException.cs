@@ -1,6 +1,6 @@
-﻿using System.Net;
+﻿namespace Application.Exceptions;
 
-namespace Application.Exceptions;
+using System.Net;
 
 public class UnauthorizedException(
     string message,

@@ -43,12 +43,8 @@ internal class TenantService(
 
     public async Task<string> ActivateAsync(string id)
     {
-        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
-
-        if (tenant is null)
-        {
-            throw new ArgumentException($"Tenant with {id} could not be found");
-        }
+        AbcTenantInfo tenant = await tenantStore.TryGetByIdentifierAsync(id) ??
+                               throw new ArgumentException($"Tenant with {id} could not be found");
 
         tenant.IsActive = true;
 
@@ -64,12 +60,8 @@ internal class TenantService(
 
     public async Task<string> DeactivateAsync(string id)
     {
-        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
-
-        if (tenant is null)
-        {
-            throw new ArgumentException($"Tenant with {id} could not be found");
-        }
+        AbcTenantInfo tenant = await tenantStore.TryGetByIdentifierAsync(id) ??
+                               throw new ArgumentException($"Tenant with {id} could not be found");
 
         tenant.IsActive = false;
 
@@ -85,12 +77,8 @@ internal class TenantService(
 
     public async Task<string> UpdateSubscriptionAsync(string id, DateTime newExpiryDate)
     {
-        AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
-
-        if (tenant is null)
-        {
-            throw new ArgumentException($"Tenant with {id} could not be found");
-        }
+        AbcTenantInfo tenant = await tenantStore.TryGetByIdentifierAsync(id) ??
+                               throw new ArgumentException($"Tenant with {id} could not be found");
 
         tenant.ValidUpTo = newExpiryDate;
 
@@ -115,11 +103,8 @@ internal class TenantService(
     {
         AbcTenantInfo? tenant = await tenantStore.TryGetByIdentifierAsync(id);
 
-        if (tenant is null)
-        {
-            throw new ArgumentException($"Tenant with {id} could not be found");
-        }
-
-        return tenant.Adapt<TenantDto>();
+        return tenant is null
+            ? throw new ArgumentException($"Tenant with {id} could not be found")
+            : tenant.Adapt<TenantDto>();
     }
 }

@@ -222,3 +222,11 @@ dotnet_diagnostic.SA1600.severity = none
 
 # SA1633: File should have header
 dotnet_diagnostic.SA1633.severity = none
+
+# NET.CodeAnalyzers
+
+# Visual Studio.Analyzers
+dotnet_diagnostic.IDE0046.severity = suggestion
+dotnet_diagnostic.IDE0053.severity = suggestion
+dotnet_diagnostic.IDE0270.severity = suggestion
+dotnet_diagnostic.IDE0022.severity = suggestion

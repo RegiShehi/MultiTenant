@@ -1,7 +1,7 @@
-﻿using Application.Features.Tenancy.Commands;
-using Application.Features.Tenancy.Models;
+﻿namespace Application.Features.Tenancy;
 
-namespace Application.Features.Tenancy;
+using Commands;
+using Models;
 
 public interface ITenantService
 {
