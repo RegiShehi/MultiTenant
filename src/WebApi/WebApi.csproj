@@ -15,12 +15,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\core\Application\Application.csproj"/>
-        <ProjectReference Include="..\src\Infrastructure\Infrastructure.csproj"/>
+        <Folder Include="Controllers\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Controllers\"/>
+        <ProjectReference Include="..\core\Application\Application.csproj"/>
+        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

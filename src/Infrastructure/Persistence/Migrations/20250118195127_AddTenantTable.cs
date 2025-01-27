@@ -27,10 +27,7 @@ namespace Infrastructure.Persistence.Migrations
                     ValidUpTo = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tenants", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Tenants", x => x.Id));
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tenants_Identifier",

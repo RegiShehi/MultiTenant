@@ -29,10 +29,7 @@ namespace Infrastructure.Persistence.Migrations
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Roles", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "School",
@@ -45,10 +42,7 @@ namespace Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EstablishedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_School", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_School", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -77,10 +71,7 @@ namespace Infrastructure.Persistence.Migrations
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Users", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "RoleClaims",
