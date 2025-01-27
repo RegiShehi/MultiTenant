@@ -2,26 +2,26 @@
 
 using System.Net;
 
-public class UnauthorizedException : Exception
+public class ConflictException : Exception
 {
-    public UnauthorizedException(string message, Exception innerException)
+    public ConflictException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
 
-    public UnauthorizedException(string message)
+    public ConflictException(string message)
         : base(message)
     {
     }
 
-    public UnauthorizedException()
+    public ConflictException()
     {
     }
 
-    public UnauthorizedException(
+    public ConflictException(
         string message,
         IReadOnlyList<string>? errorMessages,
-        HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
+        HttpStatusCode statusCode = HttpStatusCode.Conflict)
         : base(message)
     {
         ErrorMessages = errorMessages;

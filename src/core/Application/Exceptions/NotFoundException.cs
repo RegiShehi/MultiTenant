@@ -2,26 +2,26 @@
 
 using System.Net;
 
-public class UnauthorizedException : Exception
+public class NotFoundException : Exception
 {
-    public UnauthorizedException(string message, Exception innerException)
+    public NotFoundException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
 
-    public UnauthorizedException(string message)
+    public NotFoundException(string message)
         : base(message)
     {
     }
 
-    public UnauthorizedException()
+    public NotFoundException()
     {
     }
 
-    public UnauthorizedException(
+    public NotFoundException(
         string message,
         IReadOnlyList<string>? errorMessages,
-        HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
+        HttpStatusCode statusCode = HttpStatusCode.NotFound)
         : base(message)
     {
         ErrorMessages = errorMessages;

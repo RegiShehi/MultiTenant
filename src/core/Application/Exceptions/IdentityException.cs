@@ -2,26 +2,26 @@
 
 using System.Net;
 
-public class UnauthorizedException : Exception
+public class IdentityException : Exception
 {
-    public UnauthorizedException(string message, Exception innerException)
+    public IdentityException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
 
-    public UnauthorizedException(string message)
+    public IdentityException(string message)
         : base(message)
     {
     }
 
-    public UnauthorizedException()
+    public IdentityException()
     {
     }
 
-    public UnauthorizedException(
+    public IdentityException(
         string message,
         IReadOnlyList<string>? errorMessages,
-        HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
+        HttpStatusCode statusCode = HttpStatusCode.Unauthorized)
         : base(message)
     {
         ErrorMessages = errorMessages;
