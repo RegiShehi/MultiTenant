@@ -14,5 +14,7 @@ public interface IRoleService
 
     Task<RoleDto> GetRoleByIdAsync(string id, CancellationToken cancellationToken);
 
+    Task<RoleDto> GetRoleWithPermissionsAsync(string id, CancellationToken cancellationToken);
+
     Task<bool> DoesItExistAsync(string name, CancellationToken cancellationToken);
 }

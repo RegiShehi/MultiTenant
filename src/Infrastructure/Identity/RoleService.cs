@@ -1,5 +1,6 @@
 ﻿namespace Infrastructure.Identity;
 
+using System.Security.Claims;
 using Application.Exceptions;
 using Application.Features.Identity.Roles;
 using Constants;
@@ -9,11 +10,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Persistence.Contexts;
+using Tenancy;
 
 public class RoleService(
     RoleManager<ApplicationRole> roleManager,
     UserManager<ApplicationUser> userManager,
-    ApplicationDbContext context
+    ApplicationDbContext context,
+    ITenantInfo tenant
 )
     : IRoleService
 {
@@ -81,7 +84,49 @@ public class RoleService(
             : role.Name;
     }
 
-    public Task<string> UpdatePermissionsAsync(UpdatePermissionRequest request) => throw new NotImplementedException();
+    public async Task<string> UpdatePermissionsAsync(UpdatePermissionRequest request)
+    {
+        ApplicationRole role = await roleManager.FindByIdAsync(request.RoleId) ??
+                               throw new NotFoundException("Role not found");
+
+        if (role.Name == RoleConstants.Admin)
+        {
+            throw new ConflictException($"Not allowed to modify permissions for {role.Name} role");
+        }
+
+        if (tenant.Id != TenancyConstants.Root.Id)
+        {
+            request.RemovePermissionsStartingWith("Permission.Root.");
+        }
+
+        IList<Claim> claims = await roleManager.GetClaimsAsync(role);
+
+        // remove previously assigned permissions that are not present in incoming request
+        foreach (Claim claim in claims.Where(c => request.Permissions.Any(p => p == c.Value)))
+        {
+            IdentityResult result = await roleManager.RemoveClaimAsync(role, claim);
+
+            if (!result.Succeeded)
+            {
+                throw new IdentityException("Failed to remove permission", GetIdentityResultErrorDescription(result));
+            }
+        }
+
+        // assign newly selected permissions
+        foreach (string permission in request.Permissions.Where(p => claims.Any(c => c.Value == p)))
+        {
+            await context.RoleClaims.AddAsync(new IdentityRoleClaim<string>
+            {
+                RoleId = role.Id,
+                ClaimType = ClaimConstants.Permission,
+                ClaimValue = permission
+            });
+
+            await context.SaveChangesAsync();
+        }
+
+        return "Permissions updated successfully";
+    }
 
     public async Task<List<RoleDto>> GetRolesAsync(CancellationToken cancellationToken)
     {
@@ -96,6 +141,21 @@ public class RoleService(
                                throw new NotFoundException("Role not found");
 
         return role.Adapt<RoleDto>();
+    }
+
+    public async Task<RoleDto> GetRoleWithPermissionsAsync(string id, CancellationToken cancellationToken)
+    {
+        RoleDto roleDto = await GetRoleByIdAsync(id, cancellationToken);
+
+        List<string> permissions = await context.RoleClaims
+            .Where(rc => rc.RoleId == id && rc.ClaimType == ClaimConstants.Permission)
+            .Select(rc => rc.ClaimValue) // Assuming ClaimValue holds the permission
+            .OfType<string>() // Filters out nulls
+            .ToListAsync(cancellationToken);
+
+        roleDto.SetPermissions(permissions);
+
+        return roleDto;
     }
 
     public async Task<bool> DoesItExistAsync(string name, CancellationToken cancellationToken) =>
