@@ -4,7 +4,7 @@ public class UserRoleDto
 {
     public required string RoleId { get; set; }
 
-    public required string Name { get; set; }
+    public string? Name { get; set; }
 
     public string? Description { get; set; }
 

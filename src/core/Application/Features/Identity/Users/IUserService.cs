@@ -2,7 +2,7 @@
 
 public interface IUserService
 {
-    Task<string> CreateUserAsync(CreateUserRequest request);
+    Task<string> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken);
 
     Task<string> UpdateUserAsync(UpdateUserRequest request);
 
@@ -21,4 +21,8 @@ public interface IUserService
     Task<List<UserRoleDto>> GetUserRolesAsync(string userId, CancellationToken cancellationToken);
 
     Task<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken);
+
+    Task<List<string>> GetPermissionsAsync(string userId, CancellationToken cancellationToken);
+
+    Task<bool> IsPermissionAssignedAsync(string userId, string permission, CancellationToken cancellationToken);
 }
