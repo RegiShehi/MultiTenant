@@ -1,6 +1,7 @@
 ﻿namespace Infrastructure;
 
 using Identity;
+using Microsoft.AspNetCore.Builder;
 using Persistence;
 using Tenancy;
 using Microsoft.Extensions.Configuration;
@@ -15,4 +16,6 @@ public static class ServiceCollectionExtensions
             .AddMultiTenancyServices(configuration)
             .AddPersistenceServices(configuration)
             .AddIdentityServices();
+
+    public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app) => app.AddCurrentUser();
 }

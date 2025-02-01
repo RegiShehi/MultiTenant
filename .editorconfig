@@ -220,8 +220,11 @@ dotnet_diagnostic.SA1200.severity = none
 # SA1206: The 'required' modifier should appear before 'public
 dotnet_diagnostic.SA1206.severity = none
 
-# SA1313: Parameter Names Must Begin With lower case letter
+# SA1313: Parameter names must begin with lower case letter
 dotnet_diagnostic.SA1313.severity = none
+
+# SA1309: Field names must not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
 
 # SA1413: Use trailing comma in multi-line initializers
 dotnet_diagnostic.SA1413.severity = none
