@@ -240,7 +240,7 @@ public class UserService(
     }
 
     public async Task<bool>
-        IsPermissionAssignedAsync(string userId, string permission, CancellationToken cancellationToken) =>
+        IsPermissionAssignedAsync(string userId, string permission, CancellationToken cancellationToken = default) =>
         (await GetPermissionsAsync(userId, cancellationToken)).Contains(permission);
 
     private static List<string> GetIdentityResultErrorDescription(IdentityResult result) =>

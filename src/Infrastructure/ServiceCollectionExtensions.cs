@@ -15,7 +15,8 @@ public static class ServiceCollectionExtensions
         services
             .AddMultiTenancyServices(configuration)
             .AddPersistenceServices(configuration)
-            .AddIdentityServices();
+            .AddIdentityServices()
+            .AddPermissions();
 
     public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app) => app.AddCurrentUser();
 }

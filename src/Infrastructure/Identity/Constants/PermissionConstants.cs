@@ -29,7 +29,7 @@ public record SchoolPermissionDetails(
     public string Name => NameFor(Action, Feature);
 
     // Permission.Feature.Action
-    private static string NameFor(string action, string feature) => $"Permission.{feature}.{action}";
+    public static string NameFor(string action, string feature) => $"Permission.{feature}.{action}";
 }
 
 public static class SchoolPermissions

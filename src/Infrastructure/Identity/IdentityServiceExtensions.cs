@@ -4,6 +4,7 @@ using Application.Features.Identity.Roles;
 using Application.Features.Identity.Tokens;
 using Application.Features.Identity.Users;
 using Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Models;
 using Tokens;
@@ -35,4 +36,9 @@ internal static class IdentityServiceExtensions
 
     internal static IApplicationBuilder AddCurrentUser(this IApplicationBuilder app) =>
         app.UseMiddleware<CurrentUserMiddleware>();
+
+    internal static IServiceCollection AddPermissions(this IServiceCollection services) =>
+        services
+            .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+            .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 }

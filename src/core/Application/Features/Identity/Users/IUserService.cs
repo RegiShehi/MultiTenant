@@ -24,5 +24,8 @@ public interface IUserService
 
     Task<List<string>> GetPermissionsAsync(string userId, CancellationToken cancellationToken);
 
-    Task<bool> IsPermissionAssignedAsync(string userId, string permission, CancellationToken cancellationToken);
+    Task<bool> IsPermissionAssignedAsync(
+        string userId,
+        string permission,
+        CancellationToken cancellationToken = default);
 }

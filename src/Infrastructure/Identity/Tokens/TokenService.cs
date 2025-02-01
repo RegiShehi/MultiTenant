@@ -15,8 +15,8 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
 {
     public async Task<TokenResponse> LoginAsync(TokenRequest request)
     {
-        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email) ??
-                                throw new UnauthorizedAccessException("Authentication failed");
+        ApplicationUser user = await userManager.FindByEmailAsync(request.Email) ??
+                               throw new UnauthorizedAccessException("Authentication failed");
 
         if (!await userManager.CheckPasswordAsync(user, request.Password))
         {
@@ -28,12 +28,11 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
             throw new UnauthorizedAccessException("User is not active. Please contact admin.");
         }
 
-        if (tenant.Id != TenancyConstants.Root.Id && tenant.ValidUpTo < DateTime.UtcNow)
-        {
-            throw new UnauthorizedAccessException("Tenant subscription has expired. Please contact admin.");
-        }
+        bool validSubscription = tenant.Id != TenancyConstants.Root.Id && tenant.ValidUpTo < DateTime.UtcNow;
 
-        return await GenerateTokenAndUpdateUserAsync(user);
+        return validSubscription
+            ? await GenerateTokenAndUpdateUserAsync(user)
+            : throw new UnauthorizedAccessException("Tenant subscription has expired. Please contact admin.");
     }
 
     public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
