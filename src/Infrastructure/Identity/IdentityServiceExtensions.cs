@@ -37,7 +37,7 @@ internal static class IdentityServiceExtensions
             .AddScoped<ICurrentUserService, CurrentUserService>()
             .AddScoped<CurrentUserMiddleware>();
 
-    internal static IApplicationBuilder AddCurrentUser(this IApplicationBuilder app) =>
+    internal static IApplicationBuilder UseCurrentUser(this IApplicationBuilder app) =>
         app.UseMiddleware<CurrentUserMiddleware>();
 
     internal static IServiceCollection AddPermissions(this IServiceCollection services) =>

@@ -9,7 +9,7 @@ public class SwaggerHeaderAttributeProcessor : IOperationProcessor
 {
     public bool Process(OperationProcessorContext context)
     {
-        BaseHeaderAttribute? swaggerHeader = context.MethodInfo.GetCustomAttribute<BaseHeaderAttribute>();
+        SwaggerHeaderAttribute? swaggerHeader = context.MethodInfo.GetCustomAttribute<SwaggerHeaderAttribute>();
 
         if (swaggerHeader is null)
         {

@@ -1,7 +1,11 @@
 ﻿namespace Infrastructure.OpenApi;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public abstract class BaseHeaderAttribute(string headerName, string description, string defaultValue, bool isRequired)
+public abstract class SwaggerHeaderAttribute(
+    string headerName,
+    string description,
+    string defaultValue,
+    bool isRequired)
     : Attribute
 {
     public string HeaderName { get; internal set; } = headerName;

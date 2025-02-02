@@ -6,6 +6,7 @@ using Persistence;
 using Tenancy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenApi;
 
 public static class ServiceCollectionExtensions
 {
@@ -17,7 +18,11 @@ public static class ServiceCollectionExtensions
             .AddPersistenceServices(configuration)
             .AddIdentityServices()
             .AddPermissions()
-            .AddJwtAuthentication();
+            .AddJwtAuthentication()
+            .AddOpenApiDocumentation(configuration);
 
-    public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app) => app.AddCurrentUser();
+    public static IApplicationBuilder UseInfrastructure(this IApplicationBuilder app) =>
+        app
+            .UseCurrentUser()
+            .UseOpenApiDocumentation();
 }
