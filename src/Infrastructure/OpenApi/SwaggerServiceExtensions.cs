@@ -23,8 +23,8 @@ internal static class SwaggerServiceExtensions
                 apiDocument.Info.Description = swaggerConfig?.Description;
                 apiDocument.Info.Contact = new NSwag.OpenApiContact
                 {
-                    Name = swaggerConfig?.ContactName ?? "Test Name",
-                    Email = swaggerConfig?.ContactEmail ?? "Test Email",
+                    Name = swaggerConfig?.ContactName,
+                    Email = swaggerConfig?.ContactEmail,
                     Url = swaggerConfig?.ContactUrl is not null ? swaggerConfig.ContactUrl.ToString() : string.Empty
                 };
                 apiDocument.Info.License = new NSwag.OpenApiLicense
