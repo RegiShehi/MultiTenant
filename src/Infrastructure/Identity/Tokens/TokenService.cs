@@ -4,15 +4,23 @@ using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using Application.Features.Identity.Tokens;
+using Authentication.Jwt;
 using Constants;
 using Models;
 using Tenancy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInfo tenant) : ITokenService
+public class TokenService(
+    UserManager<ApplicationUser> userManager,
+    AbcTenantInfo tenant,
+    IOptions<JwtSettings> jwtSettings) : ITokenService
 {
+    private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+
     public async Task<TokenResponse> LoginAsync(TokenRequest request)
     {
         ApplicationUser user = await userManager.FindByEmailAsync(request.Email) ??
@@ -57,11 +65,18 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         return Convert.ToBase64String(randomNumber);
     }
 
-    private static string GenerateEncryptedToken(SigningCredentials credentials, IEnumerable<Claim> claims)
+    private SigningCredentials GetSigningCredentials()
+    {
+        byte[] secret = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+
+        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
+    }
+
+    private string GenerateEncryptedToken(SigningCredentials credentials, IEnumerable<Claim> claims)
     {
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpiryTimeInMinutes),
             signingCredentials: credentials);
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -69,23 +84,16 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
         return tokenHandler.WriteToken(token);
     }
 
-    private static SigningCredentials GetSigningCredentials()
-    {
-        byte[] secret = "somerandomsecrettexttosetsecrettext"u8.ToArray();
-
-        return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature);
-    }
-
     [SuppressMessage(
         "Security",
         "CA5404:Do not disable token validation checks",
         Justification = "Just for testing purpose")]
-    private static ClaimsPrincipal GetClaimPrincipalFromExpiredToken(string expiredToken)
+    private ClaimsPrincipal GetClaimPrincipalFromExpiredToken(string expiredToken)
     {
         var validationParams = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey("somerandomsecrettexttosetsecrettext"u8.ToArray()),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
             ValidateIssuer = false,
             ValidateAudience = false,
             ClockSkew = TimeSpan.Zero,
@@ -112,7 +120,7 @@ public class TokenService(UserManager<ApplicationUser> userManager, AbcTenantInf
     {
         string token = GenerateJwtToken(user);
         user.RefreshToken = GenerateRefreshToken();
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryTimeInDays);
 
         await userManager.UpdateAsync(user);
 

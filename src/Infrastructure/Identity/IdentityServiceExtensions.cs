@@ -4,6 +4,8 @@ using Application.Features.Identity.Roles;
 using Application.Features.Identity.Tokens;
 using Application.Features.Identity.Users;
 using Authentication;
+using Authentication.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Models;
@@ -11,6 +13,7 @@ using Tokens;
 using Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 internal static class IdentityServiceExtensions
 {
@@ -41,4 +44,23 @@ internal static class IdentityServiceExtensions
         services
             .AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
             .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+    internal static IServiceCollection AddJwtAuthentication(this IServiceCollection services)
+    {
+        services
+            .AddOptions<JwtSettings>()
+            .BindConfiguration(nameof(JwtSettings));
+
+        services
+            .AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
+
+        services
+            .AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
+
+        return services;
+    }
 }
