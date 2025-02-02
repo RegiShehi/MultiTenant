@@ -4,9 +4,9 @@ using Infrastructure.Identity.Authentication;
 using Infrastructure.Identity.Constants;
 using Microsoft.AspNetCore.Mvc;
 
-internal class Controller1 : Controller
+internal sealed class Controller1 : Controller
 {
     // GET
     [ShouldHavePermission(SchoolAction.View, SchoolFeature.Schools)]
-    public IActionResult Index() => View();
+    public IActionResult Index() => Ok("Hello World!");
 }
