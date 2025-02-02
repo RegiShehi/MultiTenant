@@ -27,11 +27,11 @@ public class CurrentUserService : ICurrentUserService
 
     public void SetCurrentUser(ClaimsPrincipal? claimsPrincipal)
     {
-        if (claimsPrincipal is not null)
+        if (_principal is not null)
         {
-            _principal = claimsPrincipal;
+            throw new ConflictException("Invalid operation on claim");
         }
 
-        throw new ConflictException("Invalid operation on claim");
+        _principal = claimsPrincipal;
     }
 }

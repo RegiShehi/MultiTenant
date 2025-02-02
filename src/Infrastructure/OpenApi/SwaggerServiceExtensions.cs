@@ -12,7 +12,7 @@ internal static class SwaggerServiceExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        SwaggerSettings? swaggerConfig = configuration.GetSection(nameof(SwaggerSettings)).Get<SwaggerSettings>();
+        SwaggerSettings? swaggerConfig = configuration.GetSection("SwaggerSettings").Get<SwaggerSettings>();
 
         services.AddEndpointsApiExplorer();
         _ = services.AddOpenApiDocument((document, _) =>
@@ -23,8 +23,8 @@ internal static class SwaggerServiceExtensions
                 apiDocument.Info.Description = swaggerConfig?.Description;
                 apiDocument.Info.Contact = new NSwag.OpenApiContact
                 {
-                    Name = swaggerConfig?.ContactName,
-                    Email = swaggerConfig?.ContactEmail,
+                    Name = swaggerConfig?.ContactName ?? "Test Name",
+                    Email = swaggerConfig?.ContactEmail ?? "Test Email",
                     Url = swaggerConfig?.ContactUrl is not null ? swaggerConfig.ContactUrl.ToString() : string.Empty
                 };
                 apiDocument.Info.License = new NSwag.OpenApiLicense
